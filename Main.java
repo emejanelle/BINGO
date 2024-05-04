@@ -5,9 +5,11 @@ import View.UI;
 public class Main {
     public static void main(String[] args) {
         UI ui = new UI();
-        BingoModel model = new BingoModel();
-        Logic logic = new Logic(model, ui);
+        Logic logic = new Logic(ui);
 
-        logic.StartMenu(); // Display a shuffled BINGO card
+        do {
+            logic.playGame(); // Start the game
+        } while (ui.promptToContinue()); // Check for continuation after each game round
     }
 }
+
