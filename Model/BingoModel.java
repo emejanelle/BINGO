@@ -1,6 +1,9 @@
 package Model;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
@@ -16,31 +19,13 @@ public class BingoModel {
 
     final static int SIZE = 5;
     private final String[][] card;
-    private final Queue<Integer> numberQueue;
-    private final Random rand = new Random();
+    private final Queue<Integer> shuffledNumbers;
+    private final List<Integer> drawnNumbers; 
 
     public BingoModel() {
         this.card = generateBingoCard();
-        this.numberQueue = generateShuffledNumbers();
-    }
-
-    private Queue<Integer> generateShuffledNumbers() {
-        Queue<Integer> queue = new ArrayDeque<>();
-        for (int i = 1; i <= 75; i++) {
-            queue.add(i);
-        }
-        Integer[] numbersArray = queue.toArray(new Integer[0]);
-        for (int i = 0; i < numbersArray.length; i++) {
-            int swapIndex = rand.nextInt(numbersArray.length);
-            Integer temp = numbersArray[i];
-            numbersArray[i] = numbersArray[swapIndex];
-            numbersArray[swapIndex] = temp;
-        }
-        queue.clear();
-        for (Integer number : numbersArray) {
-            queue.add(number);
-        }
-        return queue;
+        this.shuffledNumbers = generateShuffledNumbers();
+        this.drawnNumbers = new ArrayList<>();
     }
 
     private String[][] generateBingoCard() {
@@ -76,6 +61,7 @@ public class BingoModel {
         }
 
         // Shuffle the numbers in place
+        Random rand = new Random();
         for (int i = range - 1; i > 0; i--) {
             int j = rand.nextInt(i + 1);
             String temp = numbers[i];
@@ -85,6 +71,20 @@ public class BingoModel {
 
         return numbers;
     }
+
+    private Queue<Integer> generateShuffledNumbers() {
+    List<Integer> numbersList = new ArrayList<>();
+    for (int i = 1; i <= 75; i++) {
+        numbersList.add(i);
+    }
+
+    Collections.shuffle(numbersList); // Shuffle the list of numbers
+
+    Queue<Integer> shuffledQueue = new ArrayDeque<>(numbersList); // Convert shuffled list to queue
+
+    return shuffledQueue;
+}
+
 
     public void markNumber(int number) {
         for (int i = 0; i < SIZE; i++) {
@@ -97,12 +97,27 @@ public class BingoModel {
         }
     }
 
-
     public String[][] getCard() {
         return card;
     }
 
-    public Queue<Integer> getNumberQueue() {
-        return numberQueue;
+    public Queue<Integer> getShuffledNumbers() {
+        return shuffledNumbers;
+    }
+
+    public List<Integer> getDrawnNumbers() {
+        return drawnNumbers;
+    }
+
+    public int getDrawnNumber() {
+        return drawnNumbers.get(drawnNumbers.size() - 1); // Return the last drawn number
+    }
+
+    public void shuffleBalls() {
+        int drawnNumber = shuffledNumbers.poll(); // Remove the first number from the shuffled numbers queue
+        if (!drawnNumbers.contains(drawnNumber)) {
+            drawnNumbers.add(drawnNumber); // Add the drawn number to the list of drawn numbers if it's not already present
+        }
     }
 }
+    
