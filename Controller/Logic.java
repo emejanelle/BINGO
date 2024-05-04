@@ -56,8 +56,13 @@ public class Logic {
         int lastDrawnNumber = cardModel.getDrawnNumber(); // Get the last drawn number
         String lastRange = getRange(lastDrawnNumber); // Get the range of the last drawn number
         System.out.println("In Letter " + lastRange + ", number " + lastDrawnNumber); // Display the last drawn number
+        
+        // Mark the drawn number on the card
+        cardModel.markNumber(lastDrawnNumber);
+        
         view.printBingoCard(cardModel.getCard()); // Print the updated card
     }
+    
     
     private String getRange(int number) {
         if (number >= 1 && number <= 15) {
