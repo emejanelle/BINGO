@@ -1,10 +1,9 @@
 package Controller;
 
-import java.util.Scanner;
 import java.util.Random;
 import Model.BingoModel;
 import View.UI;
-import java.util.Queue;
+import java.util.Scanner;
 
 public class Logic {
     private final BingoModel cardModel;
@@ -32,59 +31,46 @@ public class Logic {
 
     public boolean promptToContinue() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Do you still wanna Continue? (Press Enter to continue or type 'exit' to quit)");
+        System.out.println("Do you still want to continue? (Press Enter to continue or type 'exit' to quit)");
         String input = scanner.nextLine().trim().toLowerCase();
         return !input.equals("exit");
     }
 
-    public void displayBingoCard() {
-        String[][] card = cardModel.getCard();
-        view.printBingoCard(card);
-        if (view.promptToPlay()) {
-            shuffleBalls();
-        }
-    }
-
     private void shuffleBalls() {
-        Scanner scanner = new Scanner(System.in);
-        Queue<Integer> numberQueue = cardModel.getNumberQueue();
-    System.out.println("Numbers in the queue:");
-    for (Integer number : numberQueue) {
-        System.out.print(number + " ");
-    }
-    System.out.println();
-        System.out.println();
-        System.out.println("Shuffling the balls...");
+        // Display all drawn numbers before shuffling
+        System.out.println("\nDrawn numbers:");
+        for (Integer drawnNumber : cardModel.getDrawnNumbers()) {
+            String range = getRange(drawnNumber);
+            System.out.println("In Letter " + range + ", number " + drawnNumber);
+        }
+    
+        System.out.println("\nShuffling the balls...");
         try {
             Thread.sleep(2000); // Wait for 2 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println();
-        try {
-            Thread.sleep(2000); // Wait for 2 seconds before printing the number
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        
-        Random rand = new Random();
-        int randomNumber = rand.nextInt(75) + 1;
-        String range = "";
-        if (randomNumber >= 1 && randomNumber <= 15) {
-            range = "B";
-        } else if (randomNumber >= 16 && randomNumber <= 30) {
-            range = "I";
-        } else if (randomNumber >= 31 && randomNumber <= 45) {
-            range = "N";
-        } else if (randomNumber >= 46 && randomNumber <= 60) {
-            range = "G";
-        } else if (randomNumber >= 61 && randomNumber <= 75) {
-            range = "O";
-        }
-        System.out.println("Sa Letrang " + range + ", number " + randomNumber + ".");
-        cardModel.getNumberQueue().offer(randomNumber); // Store the random number into the queue 
+    
+        cardModel.shuffleBalls(); // Shuffle the balls and mark the drawn number
+        int lastDrawnNumber = cardModel.getDrawnNumber(); // Get the last drawn number
+        String lastRange = getRange(lastDrawnNumber); // Get the range of the last drawn number
+        System.out.println("In Letter " + lastRange + ", number " + lastDrawnNumber); // Display the last drawn number
         view.printBingoCard(cardModel.getCard()); // Print the updated card
-        cardModel.getNumberQueue().offer(randomNumber); // Store the random number into the queue
-        
+    }
+    
+    private String getRange(int number) {
+        if (number >= 1 && number <= 15) {
+            return "B";
+        } else if (number >= 16 && number <= 30) {
+            return "I";
+        } else if (number >= 31 && number <= 45) {
+            return "N";
+        } else if (number >= 46 && number <= 60) {
+            return "G";
+        } else {
+            return "O";
+        }
     }
 }
+    
