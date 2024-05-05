@@ -20,7 +20,7 @@ public class Logic {
 
     public void playGame() {
         if (firstRound) {
-            printBingoCards(); // Print all four bingo cards
+            initialBingoCards(); // Print all four bingo cards
             firstRound = false;
             if (!view.promptToPlay()) {
                 return;
@@ -41,25 +41,32 @@ public class Logic {
     private void shuffleBalls() {
         // Draw a single number
         int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
-    
+
         // Print the drawn numbers before shuffling
         printDrawnNumber();
-    
+
         // Print the shuffled number
         String range = getRange(drawnNumber);
         System.out.println("\nShuffling the balls...");
         System.out.println("In Letter " + range + ", number " + drawnNumber);
         System.out.println();
-    
-        // Mark the drawn number and print the updated card for each card
+
+        // Mark the drawn number on each bingo card and check for a win
+        int cardIndex = 1; // Index for keeping track of card numbers
         for (BingoModel cardModel : bingoModels) {
-            cardModel.getDrawnNumbers().add(drawnNumber); // Add the drawn number to each card
-            cardModel.markNumber(drawnNumber); // Mark the drawn number on the card
-            // Print the updated card
-            view.printBingoCard(cardModel.getCard());
+            // Track drawn numbers and mark the drawn number on the bingo card
+            cardModel.getDrawnNumbers().add(drawnNumber);
+            cardModel.markNumber(drawnNumber);
+
+            // Display which card number it is before printing
+            System.out.println("\nBINGO Card " + cardIndex + ":");
+            view.printBingoCard(cardModel.getCard()); // Print the updated card
+
+            cardIndex++; // Increment card index for the next card
         }
-    
-        // Check for winning condition (assuming you want to check for win after each number)
+
+        // Check for winning condition (assuming you want to check for win after each
+        // number)
         for (BingoModel cardModel : bingoModels) {
             if (checkForWin(cardModel)) {
                 System.out.println("Congratulations! You've won the game!");
@@ -67,8 +74,8 @@ public class Logic {
             }
         }
     }
-        
-    private void printDrawnNumber(){
+
+    private void printDrawnNumber() {
         // Print the drawn numbers for all cards
         System.out.println("\nDrawn numbers:");
         for (Integer drawnNum : bingoModels[0].getDrawnNumbers()) {
@@ -76,14 +83,19 @@ public class Logic {
             System.out.println("In Letter " + rangeNum + ", number " + drawnNum);
         }
     }
-    
-    private void printBingoCards() {
-        System.out.println("BINGO Cards:");
-        String[][][] cards = new String[4][][]; // Create a 3D array to hold cards for all four bingo models
-        for (int i = 0; i < 4; i++) {
-            cards[i] = bingoModels[i].getCard(); // Retrieve each bingo card and assign it to the array
+
+    private void initialBingoCards() {
+        int cardNumber = 1; // Variable to keep track of card numbers
+
+        System.out.println("BINGO Cards:"); // Heading for the section of Bingo cards
+
+        // Loop through each BingoModel to print their respective cards with card
+        // numbers
+        for (BingoModel cardModel : bingoModels) {
+            System.out.println("\nBINGO Card " + cardNumber + ":"); // Display card number
+            view.printBingoCard(cardModel.getCard()); // Print the actual bingo card
+            cardNumber++; // Increment for the next card
         }
-        view.printBingoCards(cards); // Print all four bingo cards
     }
 
     private boolean checkForWin(BingoModel cardModel) {
