@@ -166,7 +166,7 @@ public class BingoModel {
 
     private boolean checkLine(String[] line) {
         for (String cell : line) {
-            if (!(cell.startsWith("X") || cell.equals("Free"))) {
+            if (!cell.startsWith("X")) {
                 return false;
             }
         }
