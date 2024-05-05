@@ -1,5 +1,6 @@
 package Controller;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import Model.BingoModel;
 import View.UI;
@@ -25,7 +26,6 @@ public class Logic {
                 return;
             }
         }
-
         do {
             shuffleBalls();
         } while (promptToContinue());
@@ -67,8 +67,7 @@ public class Logic {
             }
         }
     }
-    
-    
+        
     private void printDrawnNumber(){
         // Print the drawn numbers for all cards
         System.out.println("\nDrawn numbers:");
@@ -78,11 +77,6 @@ public class Logic {
         }
     }
     
-    
-    
-    
-    
-
     private void printBingoCards() {
         System.out.println("BINGO Cards:");
         String[][][] cards = new String[4][][]; // Create a 3D array to hold cards for all four bingo models
@@ -132,7 +126,7 @@ public class Logic {
 
     private boolean checkLine(String[] line) {
         for (String cell : line) {
-            if (!cell.startsWith("X")) {
+            if (!cell.contains("X")) {
                 return false; // Line is not completely marked
             }
         }
