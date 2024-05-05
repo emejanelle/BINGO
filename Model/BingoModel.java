@@ -8,19 +8,10 @@ import java.util.Queue;
 import java.util.Random;
 
 public class BingoModel {
-    static String[] BINGO = { "B", "I", "N", "G", "O" };
-    static String[][] number = {
-            { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" },
-            { "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" },
-            { "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45" },
-            { "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60" },
-            { "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75" }
-    };
-
-    final static int SIZE = 5;
+    private static final int SIZE = 5;
     private final String[][] card;
-    private final Queue<Integer> shuffledNumbers;
-    private final List<Integer> drawnNumbers;
+    private final Queue<Integer> shuffledNumbers; // To hold shuffled numbers for drawing
+    private final Queue<Integer> drawnNumbers; // To hold drawn numbers in a FIFO manner
 
     public static final String RESET = "\033[0m";
     public static final String RED = "\033[31m";
@@ -30,7 +21,7 @@ public class BingoModel {
     public BingoModel() {
         this.card = generateBingoCard();
         this.shuffledNumbers = generateShuffledNumbers();
-        this.drawnNumbers = new ArrayList<>();
+        this.drawnNumbers = new ArrayDeque<>(); // Initializing as FIFO queue
     }
 
     private String[][] generateBingoCard() {
@@ -80,22 +71,30 @@ public class BingoModel {
     private Queue<Integer> generateShuffledNumbers() {
         List<Integer> numbersList = new ArrayList<>();
         for (int i = 1; i <= 75; i++) {
-            numbersList.add(i);
+            numbersList.add(i); // Add numbers 1 through 75
         }
+        Collections.shuffle(numbersList); // Shuffle the numbers
+        return new ArrayDeque<>(numbersList); // Create a queue from the shuffled list
+    }
 
-        Collections.shuffle(numbersList); // Shuffle the list of numbers
-
-        Queue<Integer> shuffledQueue = new ArrayDeque<>(numbersList); // Convert shuffled list to queue
-
-        return shuffledQueue;
+    public void shuffleBalls() {
+        if (!shuffledNumbers.isEmpty()) {
+            int drawnNumber = shuffledNumbers.poll(); // FIFO operation to get the next number
+            if (!drawnNumbers.contains(drawnNumber)) {
+                drawnNumbers.add(drawnNumber); // Add to drawn numbers to avoid duplication
+            }
+        }
     }
 
     public void markNumber(int number) {
+        String formattedNumber = String.format("%2d", number); // Ensures at least 2 characters wide
+        String markedNumber = YELLOW + "X" + formattedNumber + "X" + RESET; // Mark with color and "X"
+
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                if (card[i][j].equals(String.valueOf(number))) {
-                    card[i][j] = YELLOW + "X" + number + "X" + RESET; // Add spaces around the number to indicate it's matched
-                    return; // Once the number is found and marked, exit the method
+                if (card[i][j].trim().equals(formattedNumber.trim())) {
+                    card[i][j] = markedNumber; // Mark the number on the card
+                    return; // Exit the loop once marked
                 }
             }
         }
@@ -109,18 +108,8 @@ public class BingoModel {
         return shuffledNumbers;
     }
 
-    public List<Integer> getDrawnNumbers() {
+    public Queue<Integer> getDrawnNumbers() {
         return drawnNumbers;
     }
 
-    public int getDrawnNumber() {
-        return drawnNumbers.get(drawnNumbers.size() - 1); // Return the last drawn number
-    }
-
-    public void shuffleBalls() {
-        int drawnNumber = shuffledNumbers.poll(); // Remove the first number from the shuffled numbers queue
-        if (!drawnNumbers.contains(drawnNumber)) {
-            drawnNumbers.add(drawnNumber); // Add the drawn number to the list of drawn numbers if it's not already present
-        }
-    }
 }
