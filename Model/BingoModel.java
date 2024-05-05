@@ -20,7 +20,12 @@ public class BingoModel {
     final static int SIZE = 5;
     private final String[][] card;
     private final Queue<Integer> shuffledNumbers;
-    private final List<Integer> drawnNumbers; 
+    private final List<Integer> drawnNumbers;
+
+    public static final String RESET = "\033[0m";
+    public static final String RED = "\033[31m";
+    public static final String GREEN = "\033[32m";
+    public static final String YELLOW = "\033[33m";
 
     public BingoModel() {
         this.card = generateBingoCard();
@@ -43,7 +48,7 @@ public class BingoModel {
             String[] numbers = generateShuffledColumn(numberRanges[col][0], numberRanges[col][1]);
             for (int row = 0; row < SIZE; row++) {
                 if (col == 2 && row == 2) { // Free space in the center
-                    card[row][col] = "Free";
+                    card[row][col] = YELLOW + "Free" + RESET;
                 } else {
                     card[row][col] = numbers[row];
                 }
@@ -89,7 +94,8 @@ public class BingoModel {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (card[i][j].equals(String.valueOf(number))) {
-                    card[i][j] = "X" + number + "X"; // Add spaces around the number to indicate it's matched
+                    card[i][j] = YELLOW + "X" + number + "X" + RESET; // Add spaces around the number to indicate it's
+                                                                      // matched
                     return; // Once the number is found and marked, exit the method
                 }
             }
@@ -115,7 +121,8 @@ public class BingoModel {
     public void shuffleBalls() {
         int drawnNumber = shuffledNumbers.poll(); // Remove the first number from the shuffled numbers queue
         if (!drawnNumbers.contains(drawnNumber)) {
-            drawnNumbers.add(drawnNumber); // Add the drawn number to the list of drawn numbers if it's not already present
+            drawnNumbers.add(drawnNumber); // Add the drawn number to the list of drawn numbers if it's not already
+                                           // present
         }
     }
 
@@ -159,7 +166,7 @@ public class BingoModel {
 
     private boolean checkLine(String[] line) {
         for (String cell : line) {
-            if (!cell.startsWith("X")) {
+            if (!(cell.startsWith("X") || cell.equals("Free"))) {
                 return false;
             }
         }
