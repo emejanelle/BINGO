@@ -3,27 +3,12 @@ package View;
 import java.util.Scanner;
 
 public class UI {
-    public void printBingoCards(String[][][] cards) {
-        System.out.println("BINGO Cards:");
-        for (int i = 0; i < Math.min(4, cards.length); i++) {
-            System.out.print("Card " + (i + 1) + ":\t");
-            printBingoCard(cards[i]);
-            System.out.println();
-        }
-    }    
-
     public void printBingoCard(String[][] card) {
-        System.out.println();
-        try {
-            Thread.sleep(1000); 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         System.out.println("┌─────┬─────┬─────┬─────┬─────┐");
         System.out.println("|  B  |  I  |  N  |  G  |  O  |");
-        System.out.println("├" + "─────┼".repeat(4) + "─────┤");
+        System.out.println("├─────┼─────┼─────┼─────┼─────┤");
 
-        // Print rows with card numbers and consistent cell alignment
+        // Print each row with consistent cell alignment
         for (int row = 0; row < card.length; row++) {
             System.out.print("|");
             for (int col = 0; col < card[row].length; col++) {
@@ -31,11 +16,11 @@ public class UI {
             }
             System.out.println();
             if (row < card.length - 1) {
-                System.out.println("├" + "─────┼".repeat(4) + "─────┤");
+                System.out.println("├─────┼─────┼─────┼─────┼─────┤");
             }
         }
 
-        System.out.println("└" + "─────┴".repeat(4) + "─────┘");
+        System.out.println("└─────┴─────┴─────┴─────┴─────┘");
     }
 
     public boolean promptToPlay() {
