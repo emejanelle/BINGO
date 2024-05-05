@@ -3,12 +3,19 @@ package View;
 import java.util.Scanner;
 
 public class UI {
-    
+    public void printBingoCards(String[][][] cards) {
+        System.out.println("BINGO Cards:");
+        for (int i = 0; i < cards.length; i++) {
+            System.out.print("Card " + (i + 1) + ":\t");
+            printBingoCard(cards[i]);
+            System.out.println();
+        }
+    }
 
     public void printBingoCard(String[][] card) {
-        System.out.println("BINGO Card:");
+        System.out.println();
         try {
-            Thread.sleep(3000); // Wait for 3 seconds
+            Thread.sleep(1000); 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -31,8 +38,6 @@ public class UI {
         System.out.println("└" + "─────┴".repeat(4) + "─────┘");
     }
 
-    
-
     public boolean promptToPlay() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Do you want to play? (Press Enter to Continue or type 'exit' to quit)");
@@ -46,18 +51,13 @@ public class UI {
         String input = scanner.nextLine().trim().toLowerCase();
         return !input.equals("exit");
     }
-    
-    
 
-    
     public UI() {
         System.out.println("Welcome to BINGO!");
         try {
-            Thread.sleep(2000); // Wait for 2 seconds
+            Thread.sleep(1000); // Wait for 2 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-
-    
 }
