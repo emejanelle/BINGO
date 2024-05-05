@@ -39,40 +39,49 @@ public class Logic {
     }
 
     private void shuffleBalls() {
+        // Draw a single number
+        int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
+    
+        // Print the drawn numbers before shuffling
+        printDrawnNumber();
+    
+        // Print the shuffled number
+        String range = getRange(drawnNumber);
+        System.out.println("\nShuffling the balls...");
+        System.out.println("In Letter " + range + ", number " + drawnNumber);
+        System.out.println();
+    
+        // Mark the drawn number and print the updated card for each card
         for (BingoModel cardModel : bingoModels) {
-            // Display all drawn numbers before shuffling
-            System.out.println("\nDrawn numbers:");
-            for (Integer drawnNumber : cardModel.getDrawnNumbers()) {
-                String range = getRange(drawnNumber);
-                System.out.println("In Letter " + range + ", number " + drawnNumber);
-            }
-
-            System.out.println("\nShuffling the balls...");
-            /*try {
-                Thread.sleep(2000); // Wait for 2 seconds
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            */
-            System.out.println();
-
-            cardModel.shuffleBalls(); // Shuffle the balls and mark the drawn number
-            int lastDrawnNumber = cardModel.getDrawnNumber(); // Get the last drawn number
-            String lastRange = getRange(lastDrawnNumber); // Get the range of the last drawn number
-            System.out.println("In Letter " + lastRange + ", number " + lastDrawnNumber); // Display the last drawn number
-
-            // Mark the drawn number on the card
-            cardModel.markNumber(lastDrawnNumber);
-
-            view.printBingoCard(cardModel.getCard()); // Print the updated card
-
-            // Check for winning condition
+            cardModel.getDrawnNumbers().add(drawnNumber); // Add the drawn number to each card
+            cardModel.markNumber(drawnNumber); // Mark the drawn number on the card
+            // Print the updated card
+            view.printBingoCard(cardModel.getCard());
+        }
+    
+        // Check for winning condition (assuming you want to check for win after each number)
+        for (BingoModel cardModel : bingoModels) {
             if (checkForWin(cardModel)) {
                 System.out.println("Congratulations! You've won the game!");
                 return; // Exit the game loop
             }
         }
     }
+    
+    
+    private void printDrawnNumber(){
+        // Print the drawn numbers for all cards
+        System.out.println("\nDrawn numbers:");
+        for (Integer drawnNum : bingoModels[0].getDrawnNumbers()) {
+            String rangeNum = getRange(drawnNum);
+            System.out.println("In Letter " + rangeNum + ", number " + drawnNum);
+        }
+    }
+    
+    
+    
+    
+    
 
     private void printBingoCards() {
         System.out.println("BINGO Cards:");
