@@ -5,12 +5,12 @@ import java.util.Scanner;
 public class UI {
     public void printBingoCards(String[][][] cards) {
         System.out.println("BINGO Cards:");
-        for (int i = 0; i < cards.length; i++) {
+        for (int i = 0; i < Math.min(4, cards.length); i++) {
             System.out.print("Card " + (i + 1) + ":\t");
             printBingoCard(cards[i]);
             System.out.println();
         }
-    }
+    }    
 
     public void printBingoCard(String[][] card) {
         System.out.println();
