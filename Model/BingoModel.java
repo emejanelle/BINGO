@@ -73,18 +73,17 @@ public class BingoModel {
     }
 
     private Queue<Integer> generateShuffledNumbers() {
-    List<Integer> numbersList = new ArrayList<>();
-    for (int i = 1; i <= 75; i++) {
-        numbersList.add(i);
+        List<Integer> numbersList = new ArrayList<>();
+        for (int i = 1; i <= 75; i++) {
+            numbersList.add(i);
+        }
+
+        Collections.shuffle(numbersList); // Shuffle the list of numbers
+
+        Queue<Integer> shuffledQueue = new ArrayDeque<>(numbersList); // Convert shuffled list to queue
+
+        return shuffledQueue;
     }
-
-    Collections.shuffle(numbersList); // Shuffle the list of numbers
-
-    Queue<Integer> shuffledQueue = new ArrayDeque<>(numbersList); // Convert shuffled list to queue
-
-    return shuffledQueue;
-}
-
 
     public void markNumber(int number) {
         for (int i = 0; i < SIZE; i++) {
@@ -119,5 +118,51 @@ public class BingoModel {
             drawnNumbers.add(drawnNumber); // Add the drawn number to the list of drawn numbers if it's not already present
         }
     }
+
+    public boolean checkForWin() {
+        String[][] card = this.getCard();
+
+        // Check for horizontal win
+        for (int row = 0; row < card.length; row++) {
+            if (checkLine(card[row])) {
+                return true;
+            }
+        }
+
+        // Check for vertical win
+        for (int col = 0; col < card[0].length; col++) {
+            String[] column = new String[card.length];
+            for (int row = 0; row < card.length; row++) {
+                column[row] = card[row][col];
+            }
+            if (checkLine(column)) {
+                return true;
+            }
+        }
+
+        // Check for diagonal win (top-left to bottom-right)
+        String[] diagonal1 = new String[card.length];
+        for (int i = 0; i < card.length; i++) {
+            diagonal1[i] = card[i][i];
+        }
+        if (checkLine(diagonal1)) {
+            return true;
+        }
+
+        // Check for diagonal win (top-right to bottom-left)
+        String[] diagonal2 = new String[card.length];
+        for (int i = 0; i < card.length; i++) {
+            diagonal2[i] = card[i][card.length - 1 - i];
+        }
+        return checkLine(diagonal2);
+    }
+
+    private boolean checkLine(String[] line) {
+        for (String cell : line) {
+            if (!cell.startsWith("X")) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
-    
