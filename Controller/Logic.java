@@ -45,11 +45,12 @@ public class Logic {
         }
     
         System.out.println("\nShuffling the balls...");
-        try {
+        /*try {
             Thread.sleep(2000); // Wait for 2 seconds
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        */
         System.out.println();
     
         cardModel.shuffleBalls(); // Shuffle the balls and mark the drawn number
@@ -61,8 +62,64 @@ public class Logic {
         cardModel.markNumber(lastDrawnNumber);
         
         view.printBingoCard(cardModel.getCard()); // Print the updated card
+        
+        // Check for winning condition
+        if (checkForWin()) {
+            System.out.println("Congratulations! You've won the game!");
+            return; // Exit the game loop
+        }
     }
     
+    private boolean checkForWin() {
+        String[][] card = cardModel.getCard();
+        
+        // Check for horizontal win
+        for (int row = 0; row < card.length; row++) {
+            if (checkLine(card[row])) {
+                return true;
+            }
+        }
+        
+        // Check for vertical win
+        for (int col = 0; col < card[0].length; col++) {
+            String[] column = new String[card.length];
+            for (int row = 0; row < card.length; row++) {
+                column[row] = card[row][col];
+            }
+            if (checkLine(column)) {
+                return true;
+            }
+        }
+        
+        // Check for diagonal win (top-left to bottom-right)
+        String[] diagonal1 = new String[card.length];
+        for (int i = 0; i < card.length; i++) {
+            diagonal1[i] = card[i][i];
+        }
+        if (checkLine(diagonal1)) {
+            return true;
+        }
+        
+        // Check for diagonal win (top-right to bottom-left)
+        String[] diagonal2 = new String[card.length];
+        for (int i = 0; i < card.length; i++) {
+            diagonal2[i] = card[i][card.length - 1 - i];
+        }
+        if (checkLine(diagonal2)) {
+            return true;
+        }
+        
+        return false; // No winning condition found
+    }
+    
+    private boolean checkLine(String[] line) {
+        for (String cell : line) {
+            if (!cell.startsWith("X")) {
+                return false; // Line is not completely marked
+            }
+        }
+        return true; // All cells in the line are marked
+    }
     
     private String getRange(int number) {
         if (number >= 1 && number <= 15) {
