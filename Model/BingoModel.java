@@ -10,7 +10,7 @@ import java.util.Random;
 public class BingoModel {
     private static final int SIZE = 5;
     private final String[][] card;
-    private final Queue<Integer> shuffledNumbers; // To hold shuffled numbers for drawing
+    private Queue<Integer> shuffledNumbers; // To hold shuffled numbers for drawing
     private final Queue<Integer> drawnNumbers; // To hold drawn numbers in a FIFO manner
 
     public static final String RESET = "\033[0m";
@@ -77,13 +77,16 @@ public class BingoModel {
         return new ArrayDeque<>(numbersList); // Create a queue from the shuffled list
     }
 
-    public void shuffleBalls() {
-        if (!shuffledNumbers.isEmpty()) {
-            int drawnNumber = shuffledNumbers.poll(); // FIFO operation to get the next number
-            if (!drawnNumbers.contains(drawnNumber)) {
-                drawnNumbers.add(drawnNumber); // Add to drawn numbers to avoid duplication
-            }
-        }
+    public Queue<Integer> getShuffledNumbers() {
+        return shuffledNumbers;
+    }
+
+    public void setShuffledNumbers(Queue<Integer> newQueue) {
+        this.shuffledNumbers = newQueue;
+    }
+
+    public Queue<Integer> getDrawnNumbers() {
+        return drawnNumbers;
     }
 
     public void markNumber(int number) {
@@ -102,14 +105,6 @@ public class BingoModel {
 
     public String[][] getCard() {
         return card;
-    }
-
-    public Queue<Integer> getShuffledNumbers() {
-        return shuffledNumbers;
-    }
-
-    public Queue<Integer> getDrawnNumbers() {
-        return drawnNumbers;
     }
 
 }
