@@ -1,6 +1,11 @@
 package Controller;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 import Model.BingoModel;
 import View.UI;
@@ -31,42 +36,41 @@ public class Logic {
         } while (promptToContinue());
     }
 
-    public boolean promptToContinue() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Do you still want to continue? (Press Enter to continue or type 'exit' to quit)");
-        String input = scanner.nextLine().trim().toLowerCase();
-        return !input.equals("exit");
-    }
-
     private void shuffleBalls() {
-        // Draw a single number
-        int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
+        // System.out.println("\nCurrent Shuffled Numbers:");
+        printShuffledNumbers(); // Display current queue before drawing
 
-        // Print the drawn numbers before shuffling
-        printDrawnNumber();
+        if (!bingoModels[0].getShuffledNumbers().isEmpty()) {
+            // Draw a single number and dequeue it
+            int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
 
-        // Print the shuffled number
-        String range = getRange(drawnNumber);
-        System.out.println("\nShuffling the balls...");
-        System.out.println("In Letter " + range + ", number " + drawnNumber);
-        System.out.println();
+            printDrawnNumber();
 
-        // Mark the drawn number on each bingo card and check for a win
-        int cardIndex = 1; // Index for keeping track of card numbers
-        for (BingoModel cardModel : bingoModels) {
-            // Track drawn numbers and mark the drawn number on the bingo card
-            cardModel.getDrawnNumbers().add(drawnNumber);
-            cardModel.markNumber(drawnNumber);
+            // Mark the drawn number on each bingo card
+            for (BingoModel cardModel : bingoModels) {
+                cardModel.getDrawnNumbers().add(drawnNumber); // Add to drawn queue
+                cardModel.markNumber(drawnNumber); // Mark the number on the bingo card
+            }
 
-            // Display which card number it is before printing
-            System.out.println("\nBINGO Card " + cardIndex + ":");
-            view.printBingoCard(cardModel.getCard()); // Print the updated card
+            // Print the drawn number and the corresponding letter
+            String range = getRange(drawnNumber);
+            System.out.println("\nShuffling the balls...");
+            System.out.println("In Letter " + range + ", number " + drawnNumber);
+            System.out.println();
 
-            cardIndex++; // Increment card index for the next card
+            // Print the updated Bingo cards
+            int cardIndex = 1; // Index for keeping track of card numbers
+            for (BingoModel cardModel : bingoModels) {
+                System.out.println("\nBINGO Card " + cardIndex + ":");
+                view.printBingoCard(cardModel.getCard());
+                cardIndex++; // Increment for the next card
+            }
+
+            // Reshuffle the queue
+            reshuffleQueue(); // Ensure the queue is reshuffled
         }
 
-        // Check for winning condition (assuming you want to check for win after each
-        // number)
+        // Check for winning condition after each draw
         for (BingoModel cardModel : bingoModels) {
             if (checkForWin(cardModel)) {
                 System.out.println("Congratulations! You've won the game!");
@@ -74,6 +78,78 @@ public class Logic {
             }
         }
     }
+
+    private void reshuffleQueue() {
+        Queue<Integer> currentQueue = bingoModels[0].getShuffledNumbers();
+
+        List<Integer> list = new ArrayList<>(currentQueue);
+        Collections.shuffle(list); // Shuffle the list
+
+        Queue<Integer> reshuffledQueue = new ArrayDeque<>(list); // Rebuild the queue
+
+        // Update all BingoModel instances with the new reshuffled queue
+        for (BingoModel model : bingoModels) {
+            model.setShuffledNumbers(reshuffledQueue); // Update the shuffled queue
+        }
+    }
+
+    private void printShuffledNumbers() {
+        Queue<Integer> shuffledQueue = bingoModels[0].getShuffledNumbers(); // Get current queue
+        if (shuffledQueue.isEmpty()) {
+            System.out.println("Shuffled Numbers: None"); // Display when the queue is empty
+        } else {
+            System.out.print("Shuffled Numbers: ");
+            for (Integer number : shuffledQueue) {
+                String range = getRange(number); // Determine the range for each number
+                System.out.print(range + number + " "); // Print the number with its range
+            }
+            System.out.println(); // Print a newline after all numbers are printed
+        }
+    }
+
+    public boolean promptToContinue() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Do you still want to continue? (Press Enter to continue or type 'exit' to quit)");
+        String input = scanner.nextLine().trim().toLowerCase();
+        return !input.equals("exit");
+    }
+
+    // private void shuffleBalls() {
+    // // Draw a single number
+    // int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
+
+    // // Print the drawn numbers before shuffling
+    // printDrawnNumber();
+
+    // // Print the shuffled number
+    // String range = getRange(drawnNumber);
+    // System.out.println("\nShuffling the balls...");
+    // System.out.println("In Letter " + range + ", number " + drawnNumber);
+    // System.out.println();
+
+    // // Mark the drawn number on each bingo card and check for a win
+    // int cardIndex = 1; // Index for keeping track of card numbers
+    // for (BingoModel cardModel : bingoModels) {
+    // // Track drawn numbers and mark the drawn number on the bingo card
+    // cardModel.getDrawnNumbers().add(drawnNumber);
+    // cardModel.markNumber(drawnNumber);
+
+    // // Display which card number it is before printing
+    // System.out.println("\nBINGO Card " + cardIndex + ":");
+    // view.printBingoCard(cardModel.getCard()); // Print the updated card
+
+    // cardIndex++; // Increment card index for the next card
+    // }
+
+    // // Check for winning condition (assuming you want to check for win after each
+    // // number)
+    // for (BingoModel cardModel : bingoModels) {
+    // if (checkForWin(cardModel)) {
+    // System.out.println("Congratulations! You've won the game!");
+    // return; // Exit the game loop
+    // }
+    // }
+    // }
 
     private void printDrawnNumber() {
         // Print the drawn numbers for all cards
