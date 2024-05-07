@@ -1,10 +1,5 @@
 package Controller;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 import Model.BingoModel;
@@ -14,6 +9,11 @@ public class Logic {
     private final BingoModel[] bingoModels;
     private final UI view;
     private boolean firstRound = true;
+    public final String GREEN = "\033[0;32m"; // GREEN
+    public final String RED = "\033[0;31m"; // RED
+    public final String RESET = "\033[0m"; // Text
+    public final String YELLOW_UNDERLINED = "\033[4;33m"; // YELLOW
+    public final String GREEN_UNDERLINED = "\033[4;32m"; // GREEN
 
     public Logic(UI view) {
         this.view = view;
@@ -34,16 +34,15 @@ public class Logic {
         do {
             shuffleBalls();
         } while (promptToContinue());
-    
+
         // Exit the program after winning
-        System.out.println("Congratulations! You've won the game!");
+        System.out.println("  ".repeat(15) + GREEN + "Congratulations! You've won the game!" + RESET);
         System.exit(0);
     }
-    
 
     private void shuffleBalls() {
         printShuffledNumbers(); // Display current queue before drawing
-    
+
         if (!bingoModels[0].getShuffledNumbers().isEmpty()) {
             int drawnNumber = bingoModels[0].getShuffledNumbers().poll(); // Draw a single number
             printDrawnNumber();
@@ -51,46 +50,30 @@ public class Logic {
                 cardModel.getDrawnNumbers().add(drawnNumber);
                 cardModel.markNumber(drawnNumber);
             }
-            System.out.println("\nDrawing a number...");
-            System.out.println("In Letter " + getRange(drawnNumber) + ", number " + drawnNumber + "\n");
+            System.out.println("\n" + "  ".repeat(15) + YELLOW_UNDERLINED + "Drawing a number..." + RESET);
+            System.out
+                    .println("  ".repeat(15) + "In Letter " + getRange(drawnNumber) + ", number " + drawnNumber + "\n");
             int cardIndex = 1;
             for (BingoModel cardModel : bingoModels) {
-                System.out.println("\nBINGO Card " + cardIndex + ":");
+                System.out.println("\n" + "  ".repeat(30) + "BINGO Card " + cardIndex + ":");
                 view.printBingoCard(cardModel.getCard());
                 cardIndex++;
             }
-            reshuffleQueue();
-    
+
             // Check for winning condition after each draw
             for (BingoModel cardModel : bingoModels) {
                 if (checkForWin(cardModel.getCard())) {
-                    System.out.println("Congratulations! You've won the game!");
+                    System.out.println("  ".repeat(15) + GREEN + "Congratulations! You've won the game!" + RESET);
                     return; // Exit the game loop if a win is detected
                 }
             }
-        }
-    }
-    
-    
-
-    private void reshuffleQueue() {
-        Queue<Integer> currentQueue = bingoModels[0].getShuffledNumbers();
-
-        List<Integer> list = new ArrayList<>(currentQueue);
-        Collections.shuffle(list); // Shuffle the list
-
-        Queue<Integer> reshuffledQueue = new ArrayDeque<>(list); // Rebuild the queue
-
-        // Update all BingoModel instances with the new reshuffled queue
-        for (BingoModel model : bingoModels) {
-            model.setShuffledNumbers(reshuffledQueue); // Update the shuffled queue
         }
     }
 
     private void printShuffledNumbers() {
         Queue<Integer> shuffledQueue = bingoModels[0].getShuffledNumbers(); // Get current queue
         if (shuffledQueue.isEmpty()) {
-            System.out.println("Shuffled Numbers: None"); // Display when the queue is empty
+            System.out.println("  ".repeat(15) + "Shuffled Numbers: None"); // Display when the queue is empty
         } else {
             System.out.print("Shuffled Numbers: ");
             for (Integer number : shuffledQueue) {
@@ -103,66 +86,28 @@ public class Logic {
 
     public boolean promptToContinue() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Do you still want to continue? (Press Enter to continue or type 'exit' to quit)");
+        System.out.println(
+                "  ".repeat(15) + "Do you still want to continue? (Press Enter to continue or type 'exit' to quit)");
         String input = scanner.nextLine().trim().toLowerCase();
         return !input.equals("exit");
     }
 
-    // private void shuffleBalls() {
-    // // Draw a single number
-    // int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
-
-    // // Print the drawn numbers before shuffling
-    // printDrawnNumber();
-
-    // // Print the shuffled number
-    // String range = getRange(drawnNumber);
-    // System.out.println("\nShuffling the balls...");
-    // System.out.println("In Letter " + range + ", number " + drawnNumber);
-    // System.out.println();
-
-    // // Mark the drawn number on each bingo card and check for a win
-    // int cardIndex = 1; // Index for keeping track of card numbers
-    // for (BingoModel cardModel : bingoModels) {
-    // // Track drawn numbers and mark the drawn number on the bingo card
-    // cardModel.getDrawnNumbers().add(drawnNumber);
-    // cardModel.markNumber(drawnNumber);
-
-    // // Display which card number it is before printing
-    // System.out.println("\nBINGO Card " + cardIndex + ":");
-    // view.printBingoCard(cardModel.getCard()); // Print the updated card
-
-    // cardIndex++; // Increment card index for the next card
-    // }
-
-    // // Check for winning condition (assuming you want to check for win after each
-    // // number)
-    // for (BingoModel cardModel : bingoModels) {
-    // if (checkForWin(cardModel)) {
-    // System.out.println("Congratulations! You've won the game!");
-    // return; // Exit the game loop
-    // }
-    // }
-    // }
-
     private void printDrawnNumber() {
         // Print the drawn numbers for all cards
-        System.out.println("\nDrawn numbers:");
+        System.out.println("\n" + "  ".repeat(15) + GREEN_UNDERLINED + "Drawn numbers:" + RESET);
         for (Integer drawnNum : bingoModels[0].getDrawnNumbers()) {
             String rangeNum = getRange(drawnNum);
-            System.out.println("In Letter " + rangeNum + ", number " + drawnNum);
+            System.out.println("  ".repeat(15) + "In Letter " + rangeNum + ", number " + drawnNum);
         }
     }
 
     private void initialBingoCards() {
         int cardNumber = 1; // Variable to keep track of card numbers
 
-        System.out.println("BINGO Cards:"); // Heading for the section of Bingo cards
-
         // Loop through each BingoModel to print their respective cards with card
         // numbers
         for (BingoModel cardModel : bingoModels) {
-            System.out.println("\nBINGO Card " + cardNumber + ":"); // Display card number
+            System.out.println("\n" + "  ".repeat(30) + "BINGO Card " + cardNumber + ":"); // Display card number
             view.printBingoCard(cardModel.getCard()); // Print the actual bingo card
             cardNumber++; // Increment for the next card
         }
@@ -175,7 +120,7 @@ public class Logic {
                 return true;
             }
         }
-    
+
         // Check for vertical win
         for (int col = 0; col < card[0].length; col++) {
             String[] column = new String[card.length];
@@ -186,7 +131,7 @@ public class Logic {
                 return true;
             }
         }
-    
+
         // Check for diagonal win (top-left to bottom-right)
         String[] diagonal1 = new String[card.length];
         for (int i = 0; i < card.length; i++) {
@@ -195,7 +140,7 @@ public class Logic {
         if (checkLine(diagonal1)) {
             return true;
         }
-    
+
         // Check for diagonal win (top-right to bottom-left)
         String[] diagonal2 = new String[card.length];
         for (int i = 0; i < card.length; i++) {
@@ -203,7 +148,7 @@ public class Logic {
         }
         return checkLine(diagonal2);
     }
-    
+
     private boolean checkLine(String[] line) {
         for (String cell : line) {
             if (!cell.contains("-")) {
@@ -212,9 +157,6 @@ public class Logic {
         }
         return true; // All cells in the line are marked
     }
-    
-    
-    
 
     private String getRange(int number) {
         if (number >= 1 && number <= 15) {
