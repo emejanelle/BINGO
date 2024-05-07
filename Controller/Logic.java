@@ -51,7 +51,7 @@ public class Logic {
                 cardModel.getDrawnNumbers().add(drawnNumber);
                 cardModel.markNumber(drawnNumber);
             }
-            System.out.println("\nShuffling the balls...");
+            System.out.println("\nDrawing a number...");
             System.out.println("In Letter " + getRange(drawnNumber) + ", number " + drawnNumber + "\n");
             int cardIndex = 1;
             for (BingoModel cardModel : bingoModels) {
