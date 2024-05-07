@@ -34,50 +34,44 @@ public class Logic {
         do {
             shuffleBalls();
         } while (promptToContinue());
+    
+        // Exit the program after winning
+        System.out.println("Congratulations! You've won the game!");
+        System.exit(0);
     }
+    
 
     private void shuffleBalls() {
-        // System.out.println("\nCurrent Shuffled Numbers:");
         printShuffledNumbers(); // Display current queue before drawing
-
+    
         if (!bingoModels[0].getShuffledNumbers().isEmpty()) {
-            // Draw a single number and dequeue it
-            int drawnNumber = bingoModels[0].getShuffledNumbers().poll();
-
+            int drawnNumber = bingoModels[0].getShuffledNumbers().poll(); // Draw a single number
             printDrawnNumber();
-
-            // Mark the drawn number on each bingo card
             for (BingoModel cardModel : bingoModels) {
-                cardModel.getDrawnNumbers().add(drawnNumber); // Add to drawn queue
-                cardModel.markNumber(drawnNumber); // Mark the number on the bingo card
+                cardModel.getDrawnNumbers().add(drawnNumber);
+                cardModel.markNumber(drawnNumber);
             }
-
-            // Print the drawn number and the corresponding letter
-            String range = getRange(drawnNumber);
             System.out.println("\nShuffling the balls...");
-            System.out.println("In Letter " + range + ", number " + drawnNumber);
-            System.out.println();
-
-            // Print the updated Bingo cards
-            int cardIndex = 1; // Index for keeping track of card numbers
+            System.out.println("In Letter " + getRange(drawnNumber) + ", number " + drawnNumber + "\n");
+            int cardIndex = 1;
             for (BingoModel cardModel : bingoModels) {
                 System.out.println("\nBINGO Card " + cardIndex + ":");
                 view.printBingoCard(cardModel.getCard());
-                cardIndex++; // Increment for the next card
+                cardIndex++;
             }
-
-            // Reshuffle the queue
-            reshuffleQueue(); // Ensure the queue is reshuffled
-        }
-
-        // Check for winning condition after each draw
-        for (BingoModel cardModel : bingoModels) {
-            if (checkForWin(cardModel)) {
-                System.out.println("Congratulations! You've won the game!");
-                return; // Exit the game loop
+            reshuffleQueue();
+    
+            // Check for winning condition after each draw
+            for (BingoModel cardModel : bingoModels) {
+                if (checkForWin(cardModel.getCard())) {
+                    System.out.println("Congratulations! You've won the game!");
+                    return; // Exit the game loop if a win is detected
+                }
             }
         }
     }
+    
+    
 
     private void reshuffleQueue() {
         Queue<Integer> currentQueue = bingoModels[0].getShuffledNumbers();
@@ -174,16 +168,14 @@ public class Logic {
         }
     }
 
-    private boolean checkForWin(BingoModel cardModel) {
-        String[][] card = cardModel.getCard();
-
+    private boolean checkForWin(String[][] card) {
         // Check for horizontal win
         for (int row = 0; row < card.length; row++) {
             if (checkLine(card[row])) {
                 return true;
             }
         }
-
+    
         // Check for vertical win
         for (int col = 0; col < card[0].length; col++) {
             String[] column = new String[card.length];
@@ -194,7 +186,7 @@ public class Logic {
                 return true;
             }
         }
-
+    
         // Check for diagonal win (top-left to bottom-right)
         String[] diagonal1 = new String[card.length];
         for (int i = 0; i < card.length; i++) {
@@ -203,7 +195,7 @@ public class Logic {
         if (checkLine(diagonal1)) {
             return true;
         }
-
+    
         // Check for diagonal win (top-right to bottom-left)
         String[] diagonal2 = new String[card.length];
         for (int i = 0; i < card.length; i++) {
@@ -211,15 +203,18 @@ public class Logic {
         }
         return checkLine(diagonal2);
     }
-
+    
     private boolean checkLine(String[] line) {
         for (String cell : line) {
-            if (!cell.contains("X")) {
+            if (!cell.contains("-")) {
                 return false; // Line is not completely marked
             }
         }
         return true; // All cells in the line are marked
     }
+    
+    
+    
 
     private String getRange(int number) {
         if (number >= 1 && number <= 15) {
