@@ -39,7 +39,7 @@ public class BingoModel {
             String[] numbers = generateShuffledColumn(numberRanges[col][0], numberRanges[col][1]);
             for (int row = 0; row < SIZE; row++) {
                 if (col == 2 && row == 2) { // Free space in the center
-                    card[row][col] = YELLOW + "Free" + RESET;
+                    card[row][col] = YELLOW + "-Free" + RESET;
                 } else {
                     card[row][col] = numbers[row];
                 }
@@ -91,8 +91,8 @@ public class BingoModel {
 
     public void markNumber(int number) {
         String formattedNumber = String.format("%2d", number); // Ensures at least 2 characters wide
-        String markedNumber = YELLOW + "X" + formattedNumber + "X" + RESET; // Mark with color and "X"
-
+        String markedNumber = YELLOW + "-" + formattedNumber + RESET; // Mark with color and reset color after
+    
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (card[i][j].trim().equals(formattedNumber.trim())) {
@@ -102,6 +102,9 @@ public class BingoModel {
             }
         }
     }
+    
+    
+    
 
     public String[][] getCard() {
         return card;
