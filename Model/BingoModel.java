@@ -39,7 +39,7 @@ public class BingoModel {
             String[] numbers = generateShuffledColumn(numberRanges[col][0], numberRanges[col][1]);
             for (int row = 0; row < SIZE; row++) {
                 if (col == 2 && row == 2) { // Free space in the center
-                    card[row][col] = YELLOW + "-Free" + RESET;
+                    card[row][col] = YELLOW + "Free" + RESET;
                 } else {
                     card[row][col] = numbers[row];
                 }
@@ -89,22 +89,25 @@ public class BingoModel {
         return drawnNumbers;
     }
 
+    // Marking function with alignment fixes
     public void markNumber(int number) {
-        String formattedNumber = String.format("%2d", number); // Ensures at least 2 characters wide
-        String markedNumber = YELLOW + "-" + formattedNumber + RESET; // Mark with color and reset color after
-    
+        // Ensure the number is formatted with at least 2 characters
+        String formattedNumber = String.format("%2d", number);
+
+        // Create a version of the marked number that retains the same width
+        String markedNumber = YELLOW + "-" + formattedNumber + " " + RESET; // The dash adds width to maintain alignment
+
+        // Iterate through the card to find and mark the number
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
+                // Use trimmed comparison to ensure alignment works with padding
                 if (card[i][j].trim().equals(formattedNumber.trim())) {
-                    card[i][j] = markedNumber; // Mark the number on the card
-                    return; // Exit the loop once marked
+                    card[i][j] = markedNumber; // Mark the number with consistent width
+                    return; // Exit once we've marked it
                 }
             }
         }
     }
-    
-    
-    
 
     public String[][] getCard() {
         return card;
