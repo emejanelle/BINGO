@@ -71,18 +71,54 @@ public class Logic {
     }
 
     private void printShuffledNumbers() {
-        Queue<Integer> shuffledQueue = bingoModels[0].getShuffledNumbers(); // Get current queue
+        Queue<Integer> shuffledQueue = bingoModels[0].getShuffledNumbers();
+        final int numColumns = 5; // number of columns in the display
+        final String indent = " ".repeat(30); // Indentation for each row
+        int itemWidth = 6; // each item will have a fixed width to align columns
+
         if (shuffledQueue.isEmpty()) {
-            System.out.println("  ".repeat(15) + "Shuffled Numbers: None"); // Display when the queue is empty
+            System.out.println(indent + GREEN_UNDERLINED + "Shuffled Numbers: None" + RESET);
         } else {
-            System.out.print("Shuffled Numbers: ");
+            System.out.println(indent + GREEN_UNDERLINED + "Shuffled Numbers:" + RESET);
+            int count = 0;
+
             for (Integer number : shuffledQueue) {
-                String range = getRange(number); // Determine the range for each number
-                System.out.print(range + number + " "); // Print the number with its range
+                if (count % 13 == 0) {
+                    System.out.print(indent); // Only print indent at the start of a new line
+                }
+
+                String range = getRange(number);
+                System.out.printf("%-" + itemWidth + "s", range + number); // Print number with range, padded to
+                                                                           // itemWidth
+
+                count++;
+                if (count % 13 == 0) { // New line after the last column
+                    System.out.println();
+                }
             }
-            System.out.println(); // Print a newline after all numbers are printed
+
+            if (count % numColumns != 0) { // Ensure the last line ends with a newline if it's not full
+                System.out.println();
+            }
+            System.out.println();
         }
     }
+
+    // private void printShuffledNumbers() {
+    // Queue<Integer> shuffledQueue = bingoModels[0].getShuffledNumbers(); // Get
+    // current queue
+    // if (shuffledQueue.isEmpty()) {
+    // System.out.println(" ".repeat(15) + "Shuffled Numbers: None"); // Display
+    // when the queue is empty
+    // } else {
+    // System.out.print("Shuffled Numbers: ");
+    // for (Integer number : shuffledQueue) {
+    // String range = getRange(number); // Determine the range for each number
+    // System.out.print(range + number + " "); // Print the number with its range
+    // }
+    // System.out.println(); // Print a newline after all numbers are printed
+    // }
+    // }
 
     public boolean promptToContinue() {
         Scanner scanner = new Scanner(System.in);
