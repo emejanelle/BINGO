@@ -3,6 +3,12 @@ package View;
 import java.util.Scanner;
 
 public class UI {
+    private final Scanner scanner;
+
+    public UI(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
     public void printBingoCard(String[][] card) {
         System.out.println("┌─────┬─────┬─────┬─────┬─────┐");
         System.out.println("|  B  |  I  |  N  |  G  |  O  |");
@@ -22,6 +28,7 @@ public class UI {
 
         System.out.println("└─────┴─────┴─────┴─────┴─────┘");
     }
+    
 
     public boolean promptToPlay() {
         Scanner scanner = new Scanner(System.in);
@@ -38,6 +45,7 @@ public class UI {
     }
 
     public UI() {
+        this.scanner = null;
         System.out.println("Welcome to BINGO!");
         try {
             Thread.sleep(1000); // Wait for 2 seconds
