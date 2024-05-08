@@ -10,8 +10,8 @@ import java.util.Random;
 public class BingoModel {
     private static final int SIZE = 5;
     private final String[][] card;
-    private Queue<Integer> shuffledNumbers; // To hold shuffled numbers for drawing
-    private final Queue<Integer> drawnNumbers; // To hold drawn numbers in a FIFO manner
+    private Queue<Integer> shuffledNumbers; // shuffled numbers variable
+    private final Queue<Integer> drawnNumbers; // drawn numbers variable (first in first out)
 
     public static final String RESET = "\033[0m";
     public static final String RED = "\033[31m";
@@ -21,22 +21,23 @@ public class BingoModel {
     public BingoModel() {
         this.card = generateBingoCard();
         this.shuffledNumbers = generateShuffledNumbers();
-        this.drawnNumbers = new ArrayDeque<>(); // Initializing as FIFO queue
+        this.drawnNumbers = new ArrayDeque<>(); // fifo queue
     }
 
     private String[][] generateBingoCard() {
         String[][] card = new String[SIZE][SIZE];
-        int[][] numberRanges = {
-                { 1, 15 }, // B
-                { 16, 30 }, // I
-                { 31, 45 }, // N
-                { 46, 60 }, // G
-                { 61, 75 } // O
+        String[][] number = {
+            { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" },
+            { "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" },
+            { "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45" },
+            { "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60" },
+            { "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75" }
         };
 
-        // Shuffle each column and populate the card
+        // Shuffle each column and assign to the card
         for (int col = 0; col < SIZE; col++) {
-            String[] numbers = generateShuffledColumn(numberRanges[col][0], numberRanges[col][1]);
+            String[] numbers = number[col];
+            shuffleArray(numbers); // Shuffle the numbers
             for (int row = 0; row < SIZE; row++) {
                 if (col == 2 && row == 2) { // Free space in the center
                     card[row][col] = YELLOW + "Free" + RESET;
@@ -48,33 +49,24 @@ public class BingoModel {
         return card;
     }
 
-    private String[] generateShuffledColumn(int start, int end) {
-        int range = end - start + 1;
-        String[] numbers = new String[range];
-
-        for (int i = 0; i < range; i++) {
-            numbers[i] = Integer.toString(start + i);
-        }
-
-        // Shuffle the numbers in place
+    // Shuffle method for arrays
+    private void shuffleArray(String[] array) {
         Random rand = new Random();
-        for (int i = range - 1; i > 0; i--) {
-            int j = rand.nextInt(i + 1);
-            String temp = numbers[i];
-            numbers[i] = numbers[j];
-            numbers[j] = temp;
+        for (int i = array.length - 1; i > 0; i--) {
+            int index = rand.nextInt(i + 1);
+            String temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
         }
-
-        return numbers;
     }
 
     private Queue<Integer> generateShuffledNumbers() {
         List<Integer> numbersList = new ArrayList<>();
         for (int i = 1; i <= 75; i++) {
-            numbersList.add(i); // Add numbers 1 through 75
+            numbersList.add(i); // add numbers 1 through 75
         }
-        Collections.shuffle(numbersList); // Shuffle the numbers
-        return new ArrayDeque<>(numbersList); // Create a queue from the shuffled list
+        Collections.shuffle(numbersList); // shuffle ulit numbers
+        return new ArrayDeque<>(numbersList); // gagawing queue yung mga shinuffle na numbers (list)
     }
 
     public Queue<Integer> getShuffledNumbers() {
@@ -89,21 +81,19 @@ public class BingoModel {
         return drawnNumbers;
     }
 
-    // Marking function with alignment fixes
     public void markNumber(int number) {
-        // Ensure the number is formatted with at least 2 characters
-        String formattedNumber = String.format("%2d", number);
+        String formattedNumber = String.format("%2d", number); //2 numbers format 
 
-        // Create a version of the marked number that retains the same width
-        String markedNumber = YELLOW + "-" + formattedNumber + " " + RESET; // The dash adds width to maintain alignment
+        // gumagawa ng version ng marked number na retains the same width
+        String markedNumber = YELLOW + "-" + formattedNumber + " " + RESET; // dash adds width to maintain alignment
 
-        // Iterate through the card to find and mark the number
+        // nagiiterate sa card to find and mark the number
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                // Use trimmed comparison to ensure alignment works with padding
+                // use trimmed comparison to ensure alignment works with padding
                 if (card[i][j].trim().equals(formattedNumber.trim())) {
-                    card[i][j] = markedNumber; // Mark the number with consistent width
-                    return; // Exit once we've marked it
+                    card[i][j] = markedNumber; // mark the number with consistent width
+                    return; 
                 }
             }
         }
@@ -112,5 +102,4 @@ public class BingoModel {
     public String[][] getCard() {
         return card;
     }
-
 }
