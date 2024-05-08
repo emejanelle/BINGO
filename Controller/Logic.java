@@ -153,6 +153,7 @@ public class Logic {
         // Check for horizontal win
         for (int row = 0; row < card.length; row++) {
             if (checkLine(card[row])) {
+                System.out.println("Horizontal win detected!");
                 return true;
             }
         }
@@ -164,6 +165,7 @@ public class Logic {
                 column[row] = card[row][col];
             }
             if (checkLine(column)) {
+                System.out.println("Vertical win detected!");
                 return true;
             }
         }
@@ -174,6 +176,7 @@ public class Logic {
             diagonal1[i] = card[i][i];
         }
         if (checkLine(diagonal1)) {
+            System.out.println("Diagonal win (top-left to bottom-right) detected!");
             return true;
         }
 
@@ -182,7 +185,11 @@ public class Logic {
         for (int i = 0; i < card.length; i++) {
             diagonal2[i] = card[i][card.length - 1 - i];
         }
-        return checkLine(diagonal2);
+        if (checkLine(diagonal2)) {
+            System.out.println("Diagonal win (top-right to bottom-left) detected!");
+            return true;
+        }
+        return false;
     }
 
     private boolean checkLine(String[] line) {
